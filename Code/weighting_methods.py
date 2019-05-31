@@ -56,7 +56,7 @@ def calc_GSC_weights(rooted_tree):
     assert np.isclose(np.sum(list(weights_dict.values())), rooted_tree.total_branch_length())
     return weights_dict
 
-def recursive_GSC_fxn(node, weights_dicty, finished):
+def recursive_GSC_fxn(node, weights_dict, finished):
     """
     This is the update function for GSC that will get recursively called (using
     a depth first search strategy) to compute GSC weights for all possible terminals
