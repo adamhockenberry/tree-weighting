@@ -147,13 +147,24 @@ def calc_ACL_weights(rooted_tree):
     """
     assert rooted_tree.is_bifurcating()
     assert rooted_tree.rooted
-
+    
+    bl_list = [term.branch_length for term in rooted_tree.get_terminals()]+\
+            [internal.branch_length for internal in rooted_tree.get_nonterminals()]
+    bl_array = np.array(bl_list)
+    min_bl = np.min(bl_array[np.nonzero(bl_array)])
+    if min_bl > 10e-7:
+        min_bl = 10e-9
+    else:
+        min_bl = min_bl/100.
     #Remove zero branch length terminal clades entirely from the tree
-    zero_bl_clades = [term for term in rooted_tree.get_terminals() if term.branch_length==0.]
-    if len(zero_bl_clades) != 0:
-        rooted_tree = trim_zero_bls(rooted_tree)
-        print('Found some zero branch length terminals and have removed them. Note that '
-                'returned tree will contain fewer taxa than original')
+    for term in rooted_tree.get_terminals():
+        if term.branch_length == 0.0:
+            term.branch_length = min_bl
+    #zero_bl_clades = [term for term in rooted_tree.get_terminals() if term.branch_length==0.]
+    #if len(zero_bl_clades) != 0:
+    #    rooted_tree = trim_zero_bls(rooted_tree)
+    #    print('Found some zero branch length terminals and have removed them. Note that '
+    #            'returned tree will contain fewer taxa than original')
     
     if rooted_tree.root.branch_length:
         print('The passed tree contains a non-zero branch length root. This has been removed and'
